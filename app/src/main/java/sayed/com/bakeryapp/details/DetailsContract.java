@@ -1,5 +1,6 @@
 package sayed.com.bakeryapp.details;
 
+import java.io.Serializable;
 import java.util.List;
 
 import sayed.com.bakeryapp.main.MainContract;
@@ -17,7 +18,7 @@ public interface DetailsContract {
 
     }
 
-    interface Presenter {
+    interface Presenter extends Serializable {
         void onStepClicked(Step step);
 
         void setView(View view);

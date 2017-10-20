@@ -105,6 +105,7 @@ public class ViewStepFragment extends Fragment {
         MediaSource mediaSource = new ExtractorMediaSource(videoUri,
                 dataSourceFactory, extractorsFactory, null, null);
         if(position != C.TIME_UNSET) exoPlayer.seekTo(position);
+
         exoPlayer.prepare(mediaSource);
         exoPlayer.setPlayWhenReady(true);
     }

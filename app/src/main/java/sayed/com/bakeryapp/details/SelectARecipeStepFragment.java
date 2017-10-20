@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class SelectARecipeStepFragment extends Fragment {
     RecyclerView stepsRecyclerView;
     Unbinder unbinder;
     DetailsContract.Presenter presenter;
-
+    StepAdapter stepAdapter;
 
     @Nullable
     @Override
@@ -44,21 +45,25 @@ public class SelectARecipeStepFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.select_recipe_step_fragment, container, false);
         ButterKnife.bind(this, rootView);
         Bundle recipeBundle = getArguments();
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             recipe = (Recipe) savedInstanceState.get("recipe");
-        else if(recipeBundle != null)
+        } else if (recipeBundle != null)
             recipe = (Recipe) recipeBundle.get("recipe");
         else recipe = new Recipe();
+        presenter = (DetailsContract.Presenter) recipeBundle.get("presenter");
 
         IngredientAdapter ingredientAdapter = new IngredientAdapter(recipe.getIngredientList());
         ingredientsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         ingredientsRecyclerView.setAdapter(ingredientAdapter);
-
-        StepAdapter stepAdapter = new StepAdapter(recipe.getStepList(), presenter);
         stepsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        if (savedInstanceState == null) {
+        }
+        stepAdapter = new StepAdapter(recipe.getStepList(), presenter);
+
         stepsRecyclerView.setAdapter(stepAdapter);
-        ArrayList<String> ingredientsList = getStringFromIngredients(recipe.getIngredientList());
+
         BakingService.startUpdateService(getContext(), recipe);
+
         return rootView;
     }
 
@@ -68,12 +73,12 @@ public class SelectARecipeStepFragment extends Fragment {
 
     private ArrayList<String> getStringFromIngredients(List<Ingredient> ingredients) {
         ArrayList<String> stringIngredientList = new ArrayList<>();
-        if(ingredients != null)
-        for (Ingredient ingredient : ingredients) {
-            stringIngredientList.add(ingredient.getIngredientType() + "\n" +
-                    "Quantity: " + ingredient.getQuantity() + "\n" +
-                    "Measure: " + ingredient.getMeasure() + "\n");
-        }
+        if (ingredients != null)
+            for (Ingredient ingredient : ingredients) {
+                stringIngredientList.add(ingredient.getIngredientType() + "\n" +
+                        "Quantity: " + ingredient.getQuantity() + "\n" +
+                        "Measure: " + ingredient.getMeasure() + "\n");
+            }
         return stringIngredientList;
     }
 
@@ -87,6 +92,6 @@ public class SelectARecipeStepFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("recipe", recipe);
-
+//        outState.putSerializable("presenter" , (Serializable) presenter);
     }
 }

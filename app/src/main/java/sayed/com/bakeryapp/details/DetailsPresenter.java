@@ -1,5 +1,7 @@
 package sayed.com.bakeryapp.details;
 
+import java.io.Serializable;
+
 import sayed.com.bakeryapp.main.MainContract;
 import sayed.com.bakeryapp.model.Step;
 

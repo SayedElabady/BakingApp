@@ -15,8 +15,12 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     private static boolean isTwoPane = false;
     FragmentManager fragmentManager;
     Bundle recipeBundle;
-    private final static String FRAGMENT_STACK = "FRAGMENT_STACK";
+    SelectARecipeStepFragment selectARecipeStepFragment;
+    private final static String SELECT_TAG = "SELCET_TAG";
 
+    private final static String VIEW_TAG = "VIEW_TAG";
+    boolean isResumed = false;
+    ViewStepFragment viewStepFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,38 +32,48 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Recipe recipe = (Recipe) recipeBundle.get("recipe");
         if (recipe != null)
-        getSupportActionBar().setTitle(recipe.getRecipeName());
-        presenter = new DetailsPresenter();
-        presenter.setView(this);
-        SelectARecipeStepFragment selectARecipeStepFragment = new SelectARecipeStepFragment();
-        selectARecipeStepFragment.setPresenter(presenter);
-        selectARecipeStepFragment.setArguments(recipeBundle);
+            getSupportActionBar().setTitle(recipe.getRecipeName());
+
+
         fragmentManager = getSupportFragmentManager();
-        if(savedInstanceState == null)
-        fragmentManager
-                .beginTransaction()
-                .add(R.id.select_container, selectARecipeStepFragment)
-                .commit();
+        if (savedInstanceState == null) {
+            presenter = new DetailsPresenter();
+            presenter.setView(this);
+            recipeBundle.putSerializable("presenter" , presenter);
+
+            selectARecipeStepFragment = new SelectARecipeStepFragment();
+            selectARecipeStepFragment.setArguments(recipeBundle);
+            fragmentManager
+                    .beginTransaction()
+                    .add(R.id.select_container, selectARecipeStepFragment , SELECT_TAG)
+                    .commit();
+        }else {
+            selectARecipeStepFragment = (SelectARecipeStepFragment) fragmentManager.findFragmentByTag(SELECT_TAG);
+        }
         if (findViewById(R.id.view_step_container) != null) {
             isTwoPane = true;
+            Bundle stepBundle = new Bundle();
+            stepBundle.putSerializable("step", recipe.getStepList().get(0));
+            if(savedInstanceState == null) {
+                viewStepFragment = new ViewStepFragment();
+
+
+                viewStepFragment.setArguments(stepBundle);
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.view_step_container, viewStepFragment , VIEW_TAG)
+                        .commit();
+            }else
+                viewStepFragment = (ViewStepFragment) fragmentManager.findFragmentByTag(VIEW_TAG);
 
         }
-
-        myToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                    finish();
-
-            }
-        });
+        myToolbar.setNavigationOnClickListener(v -> finish());
 
 
     }
 
     @Override
     public void viewStep(Step step) {
-        ViewStepFragment viewStepFragment = new ViewStepFragment();
         Bundle stepBundle = new Bundle();
         stepBundle.putSerializable("step", step);
         viewStepFragment.setArguments(stepBundle);
@@ -68,12 +82,23 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
                     .replace(R.id.select_container, viewStepFragment)
                     .commit();
         } else {
-
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.view_step_container, viewStepFragment)
-                    .commit();
-
+            try {
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.view_step_container, viewStepFragment)
+                        .commit();
+            }catch (Exception e){
+                throw e;
+            }
         }
+    }
+
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
     }
 }
