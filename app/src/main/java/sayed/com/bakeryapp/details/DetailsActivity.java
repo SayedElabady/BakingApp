@@ -82,22 +82,21 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         Bundle stepBundle = new Bundle();
         stepBundle.putSerializable("step", step);
         viewStepFragment.setArguments(stepBundle);
+        if (allowFragmentCommit()) {
+            if (!isTwoPane) {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.select_container, viewStepFragment)
+                        .commit();
+            } else {
 
-        if (!isTwoPane) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.select_container, viewStepFragment)
-                    .commit();
-        } else {
-            if (allowFragmentCommit()) {
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.view_step_container, viewStepFragment)
                         .commit();
-            } else {
-                Toast.makeText(this, "Please Wait", Toast.LENGTH_SHORT).show();
             }
+        }else {
+            Toast.makeText(this , "Please Wait.." , Toast.LENGTH_SHORT).show();
         }
-
     }
 
     public boolean allowFragmentCommit() {
