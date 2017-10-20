@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import sayed.com.bakeryapp.R;
 import sayed.com.bakeryapp.model.Recipe;
@@ -19,13 +20,15 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     private final static String SELECT_TAG = "SELCET_TAG";
 
     private final static String VIEW_TAG = "VIEW_TAG";
-    boolean isResumed = false;
+    boolean allowCommit;
     ViewStepFragment viewStepFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         recipeBundle = getIntent().getExtras();
+        allowCommit = true;
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -39,31 +42,31 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         if (savedInstanceState == null) {
             presenter = new DetailsPresenter();
             presenter.setView(this);
-            recipeBundle.putSerializable("presenter" , presenter);
+            recipeBundle.putSerializable("presenter", presenter);
 
             selectARecipeStepFragment = new SelectARecipeStepFragment();
             selectARecipeStepFragment.setArguments(recipeBundle);
             fragmentManager
                     .beginTransaction()
-                    .add(R.id.select_container, selectARecipeStepFragment , SELECT_TAG)
+                    .add(R.id.select_container, selectARecipeStepFragment, SELECT_TAG)
                     .commit();
-        }else {
+        } else {
             selectARecipeStepFragment = (SelectARecipeStepFragment) fragmentManager.findFragmentByTag(SELECT_TAG);
         }
         if (findViewById(R.id.view_step_container) != null) {
             isTwoPane = true;
             Bundle stepBundle = new Bundle();
             stepBundle.putSerializable("step", recipe.getStepList().get(0));
-            if(savedInstanceState == null) {
+            if (savedInstanceState == null) {
                 viewStepFragment = new ViewStepFragment();
 
 
                 viewStepFragment.setArguments(stepBundle);
                 fragmentManager
                         .beginTransaction()
-                        .replace(R.id.view_step_container, viewStepFragment , VIEW_TAG)
+                        .replace(R.id.view_step_container, viewStepFragment, VIEW_TAG)
                         .commit();
-            }else
+            } else
                 viewStepFragment = (ViewStepFragment) fragmentManager.findFragmentByTag(VIEW_TAG);
 
         }
@@ -74,29 +77,42 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
 
     @Override
     public void viewStep(Step step) {
+        viewStepFragment = new ViewStepFragment();
+
         Bundle stepBundle = new Bundle();
         stepBundle.putSerializable("step", step);
         viewStepFragment.setArguments(stepBundle);
+
         if (!isTwoPane) {
             fragmentManager.beginTransaction()
                     .replace(R.id.select_container, viewStepFragment)
                     .commit();
         } else {
-            try {
+            if (allowFragmentCommit()) {
                 fragmentManager
                         .beginTransaction()
                         .replace(R.id.view_step_container, viewStepFragment)
                         .commit();
-            }catch (Exception e){
-                throw e;
+            } else {
+                Toast.makeText(this, "Please Wait", Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 
+    public boolean allowFragmentCommit() {
+        return allowCommit;
+    }
 
+    @Override
+    protected void onResumeFragments() {
+        allowCommit = true;
+        super.onResumeFragments();
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        allowCommit = false;
         super.onSaveInstanceState(outState);
 
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
