@@ -47,8 +47,8 @@ public class ViewStepFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.view_step_fragment, container, false);
-        exoPlayerView = rootView.findViewById(R.id.exo_player_view);
-        stepDescription = rootView.findViewById(R.id.step_description);
+        exoPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.exo_player_view);
+        stepDescription = (TextView) rootView.findViewById(R.id.step_description);
         stepBundle = getArguments();
         step = (Step) stepBundle.getSerializable("step");
         setViews();

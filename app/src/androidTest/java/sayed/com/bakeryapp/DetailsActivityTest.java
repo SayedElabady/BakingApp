@@ -43,17 +43,16 @@ public class DetailsActivityTest {
                 Espresso.registerIdlingResources(idlingResource);
         }
         @Test
-        public void mainActivity_CheckText() {
+        public void checkText_MainActivity() {
                 onView(ViewMatchers.withId(R.id.recipes_recycler_view)).perform(RecyclerViewActions.scrollToPosition(1));
                onView(withText("Brownies")).check(matches(isDisplayed()));
 
         }
         @Test
-        public void checkPlayerViewIsVisible_RecipeDetailActivity1() {
-             //   onView(ViewMatchers.withId(R.id.recipes_recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-             //   onView(ViewMatchers.withId(R.id.recipe_detail_recycler)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
-                onView(withId(R.id.exo_player_view)).check(matches(isDisplayed()));
-        }
+        public void checkREcyclerViews_DetailsActivity() {
+                onView(ViewMatchers.withId(R.id.recipes_recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+                onView(ViewMatchers.withId(R.id.steps_recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0,click()));
+             }
         @After
         public void unregisterIdlingResource() {
                 if (idlingResource != null) {
