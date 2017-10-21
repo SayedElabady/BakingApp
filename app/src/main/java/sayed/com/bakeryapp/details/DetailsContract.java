@@ -13,12 +13,12 @@ import sayed.com.bakeryapp.model.Step;
 
 public interface DetailsContract {
 
-    interface View {
+    interface View extends Serializable{
         void viewStep(Step step);
 
     }
 
-    interface Presenter extends Serializable {
+    interface Presenter  {
         void onStepClicked(Step step);
 
         void setView(View view);

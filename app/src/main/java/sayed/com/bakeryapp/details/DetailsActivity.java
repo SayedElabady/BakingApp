@@ -7,11 +7,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.Serializable;
+
 import sayed.com.bakeryapp.R;
 import sayed.com.bakeryapp.model.Recipe;
 import sayed.com.bakeryapp.model.Step;
 
-public class DetailsActivity extends AppCompatActivity implements DetailsContract.View {
+public class DetailsActivity extends AppCompatActivity implements DetailsContract.View  {
     DetailsContract.Presenter presenter;
     private static boolean isTwoPane = false;
     FragmentManager fragmentManager;
@@ -39,10 +41,11 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
 
 
         fragmentManager = getSupportFragmentManager();
+
         if (savedInstanceState == null) {
             presenter = new DetailsPresenter();
             presenter.setView(this);
-            recipeBundle.putSerializable("presenter", presenter);
+            recipeBundle.putSerializable("presenter", (Serializable) presenter);
 
             selectARecipeStepFragment = new SelectARecipeStepFragment();
             selectARecipeStepFragment.setArguments(recipeBundle);
@@ -73,6 +76,12 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         myToolbar.setNavigationOnClickListener(v -> finish());
 
 
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        allowCommit = true;
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override

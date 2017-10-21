@@ -9,8 +9,8 @@ import sayed.com.bakeryapp.model.Step;
  * Created by Sayed on 10/18/2017.
  */
 
-public class DetailsPresenter implements DetailsContract.Presenter {
-    DetailsContract.View view;
+public class DetailsPresenter implements DetailsContract.Presenter, Serializable {
+    transient DetailsContract.View view;
 
     @Override
     public void onStepClicked(Step step) {
