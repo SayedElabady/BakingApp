@@ -1,5 +1,7 @@
 package sayed.com.bakeryapp.details;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -45,10 +47,12 @@ public class ViewStepFragment extends Fragment {
     SimpleExoPlayer exoPlayer;
     Bundle stepBundle;
     Step step;
-    TextView stepDescription , errorText;
+    TextView stepDescription, errorText;
     ImageView thumbImage;
     Uri videoUri;
+    DataSource.Factory dataSourceFactory;
     long position;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -62,8 +66,8 @@ public class ViewStepFragment extends Fragment {
         videoUri = Uri.parse(step.getVideoURL());
 
         position = C.TIME_UNSET;
-        if (savedInstanceState!=null){
-        position = savedInstanceState.getLong("position" , C.TIME_UNSET);
+        if (savedInstanceState != null) {
+            position = savedInstanceState.getLong("position", C.TIME_UNSET);
 
         }
         setViews();
@@ -76,39 +80,47 @@ public class ViewStepFragment extends Fragment {
         exoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
         return rootView;
     }
+
     @Override
-    public void onResume() {
-        super.onResume();
-        if (videoUri != null)
-            initializePlayer(videoUri);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
     }
+
+
     private void setViews() {
 
-        if(!step.getThumbnailURL().equals("")){
+        if (!step.getThumbnailURL().equals("")) {
             errorText.setVisibility(View.GONE);
             Picasso.with(getContext()).load(step.getThumbnailURL()).into(thumbImage);
 
         }
         stepDescription.setText(step.getDescription());
     }
-    private void initializePlayer(Uri videoUri){
+
+    private void initializePlayer(Uri videoUri) {
         TrackSelector trackSelector = new DefaultTrackSelector();
         LoadControl loadControl = new DefaultLoadControl();
         DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
         DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
 
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
-                Util.getUserAgent(getContext(), "BakeryApp"), bandwidthMeter);
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
+        dataSourceFactory = new DefaultDataSourceFactory(getActivity(),
+                Util.getUserAgent(getActivity(), "BakeryApp"), bandwidthMeter);
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector, loadControl);
         exoPlayerView.setPlayer(exoPlayer);
 
         MediaSource mediaSource = new ExtractorMediaSource(videoUri,
                 dataSourceFactory, extractorsFactory, null, null);
-        if(position != C.TIME_UNSET) exoPlayer.seekTo(position);
+        if (position != C.TIME_UNSET) exoPlayer.seekTo(position);
 
         exoPlayer.prepare(mediaSource);
-        exoPlayer.setPlayWhenReady(true);
     }
+
+
+
+
+
+
+
     @Override
     public void onPause() {
         super.onPause();
@@ -116,19 +128,21 @@ public class ViewStepFragment extends Fragment {
             position = exoPlayer.getCurrentPosition();
             exoPlayer.stop();
             exoPlayer.release();
-
+           exoPlayer = null;
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong("position" , position);
+        outState.putLong("position", position);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-      //  unbinder.unbind();
+        //  unbinder.unbind();
     }
+
+
 }

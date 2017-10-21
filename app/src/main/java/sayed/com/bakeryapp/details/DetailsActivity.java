@@ -18,7 +18,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     Bundle recipeBundle;
     SelectARecipeStepFragment selectARecipeStepFragment;
     private final static String SELECT_TAG = "SELCET_TAG";
-
+    private final static String FRAGMENT_STACK = "FRAGMENT_STACK";
     private final static String VIEW_TAG = "VIEW_TAG";
     boolean allowCommit;
     ViewStepFragment viewStepFragment;
@@ -77,12 +77,15 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
 
     @Override
     public void viewStep(Step step) {
-        viewStepFragment = new ViewStepFragment();
 
         Bundle stepBundle = new Bundle();
         stepBundle.putSerializable("step", step);
-        viewStepFragment.setArguments(stepBundle);
         if (allowFragmentCommit()) {
+
+            viewStepFragment = new ViewStepFragment();
+
+            viewStepFragment.setArguments(stepBundle);
+
             if (!isTwoPane) {
                 fragmentManager.beginTransaction()
                         .replace(R.id.select_container, viewStepFragment)
@@ -94,13 +97,19 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
                         .replace(R.id.view_step_container, viewStepFragment)
                         .commit();
             }
-        }else {
-            Toast.makeText(this , "Please Wait.." , Toast.LENGTH_SHORT).show();
+        } else {
+
         }
     }
 
     public boolean allowFragmentCommit() {
         return allowCommit;
+    }
+
+    @Override
+    protected void onPostResume() {
+        allowCommit = true;
+        super.onPostResume();
     }
 
     @Override
