@@ -10,6 +10,7 @@ import java.util.List;
 
 import sayed.com.bakeryapp.R;
 import sayed.com.bakeryapp.details.DetailsContract;
+import sayed.com.bakeryapp.details.ViewStepFragment;
 import sayed.com.bakeryapp.listener.RecyclerViewItemClickListener;
 import sayed.com.bakeryapp.listener.StepItemClickListener;
 import sayed.com.bakeryapp.model.Step;
@@ -21,9 +22,9 @@ import sayed.com.bakeryapp.model.Step;
 public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepViewHolder> implements StepItemClickListener {
     List<Step> steps;
     DetailsContract.Presenter presenter;
-
-    public StepAdapter(List<Step> list, DetailsContract.Presenter presenter) {
-        this.presenter = presenter;
+    StepItemClickListener listener;
+    public StepAdapter(List<Step> list, StepItemClickListener listener) {
+        this.listener = listener;
         steps = list;
     }
 
@@ -45,8 +46,8 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepViewHolder
     }
 
     @Override
-    public void onClick(int itemPosition) {
-        presenter.onStepClicked(steps.get(itemPosition));
+    public void onClick(Step step) {
+        listener.onClick(step);
     }
 
     public class StepViewHolder extends RecyclerView.ViewHolder {
@@ -55,7 +56,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepViewHolder
         public StepViewHolder(View itemView, StepItemClickListener listener) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.step_item_view);
-            itemView.setOnClickListener(view -> listener.onClick(getAdapterPosition()));
+            itemView.setOnClickListener(view -> listener.onClick(steps.get(getAdapterPosition())));
         }
 
 

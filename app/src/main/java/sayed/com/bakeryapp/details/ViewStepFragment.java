@@ -36,13 +36,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import sayed.com.bakeryapp.R;
+import sayed.com.bakeryapp.listener.StepItemClickListener;
 import sayed.com.bakeryapp.model.Step;
 
 /**
  * Created by Sayed on 10/18/2017.
  */
 
-public class ViewStepFragment extends Fragment {
+public class ViewStepFragment extends Fragment  {
     SimpleExoPlayerView exoPlayerView;
     SimpleExoPlayer exoPlayer;
     Bundle stepBundle;
@@ -123,12 +124,24 @@ public class ViewStepFragment extends Fragment {
 
     @Override
     public void onPause() {
-        super.onPause();
+
         if (exoPlayer != null) {
             position = exoPlayer.getCurrentPosition();
             exoPlayer.stop();
             exoPlayer.release();
            exoPlayer = null;
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (exoPlayer != null) {
+            position = exoPlayer.getCurrentPosition();
+            exoPlayer.stop();
+            exoPlayer.release();
+            exoPlayer = null;
         }
     }
 
@@ -143,6 +156,7 @@ public class ViewStepFragment extends Fragment {
         super.onDestroyView();
         //  unbinder.unbind();
     }
+
 
 
 }

@@ -21,21 +21,22 @@ import sayed.com.bakeryapp.R;
 import sayed.com.bakeryapp.adapter.IngredientAdapter;
 import sayed.com.bakeryapp.adapter.StepAdapter;
 import sayed.com.bakeryapp.listener.RecyclerViewItemClickListener;
+import sayed.com.bakeryapp.listener.StepItemClickListener;
 import sayed.com.bakeryapp.model.Ingredient;
 import sayed.com.bakeryapp.model.Recipe;
+import sayed.com.bakeryapp.model.Step;
 import sayed.com.bakeryapp.widget.BakingService;
 
 /**
  * Created by Sayed on 10/18/2017.
  */
 
-public class SelectARecipeStepFragment extends Fragment {
+public class SelectARecipeStepFragment extends Fragment implements StepItemClickListener {
     Recipe recipe;
     @BindView(R.id.ingredients_recycler_view)
     RecyclerView ingredientsRecyclerView;
     @BindView(R.id.steps_recycler_view)
     RecyclerView stepsRecyclerView;
-    Unbinder unbinder;
     DetailsContract.Presenter presenter;
     StepAdapter stepAdapter;
 
@@ -58,7 +59,7 @@ public class SelectARecipeStepFragment extends Fragment {
         stepsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         if (savedInstanceState == null) {
         }
-        stepAdapter = new StepAdapter(recipe.getStepList(), presenter);
+        stepAdapter = new StepAdapter(recipe.getStepList(), this);
 
         stepsRecyclerView.setAdapter(stepAdapter);
 
@@ -87,7 +88,10 @@ public class SelectARecipeStepFragment extends Fragment {
         super.onDestroyView();
         //  unbinder.unbind();
     }
-
+    @Override
+    public void onClick(Step step) {
+        ((DetailsActivity)getActivity()).viewStep(step);
+    }
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
