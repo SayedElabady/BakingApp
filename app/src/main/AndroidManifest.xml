@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".details.DetailsActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"/>
+          />
         <service
             android:name=".widget.GridWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
