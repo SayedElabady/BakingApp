@@ -89,7 +89,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
 
         Bundle stepBundle = new Bundle();
         stepBundle.putSerializable("step", step);
-        if (allowFragmentCommit()) {
+ //       if (allowFragmentCommit()) {
 
             viewStepFragment = new ViewStepFragment();
 
@@ -106,10 +106,10 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
                         .replace(R.id.view_step_container, viewStepFragment)
                         .commit();
             }
-        } else {
+  //      } else {
 
+    //    }
         }
-    }
 
     public boolean allowFragmentCommit() {
         return allowCommit;
